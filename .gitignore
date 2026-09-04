@@ -1,1 +1,5 @@
 .idea
+.env
+node_modules
+/web_dashboard/.env
+web_dashboard/node_modules
