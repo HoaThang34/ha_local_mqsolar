@@ -1,5 +1,14 @@
+# IDE / Editor
+.idea/
 .idea
+.vscode/
+
+# Environment variables
 .env
-node_modules
-/web_dashboard/.env
-web_dashboard/node_modules
+*.env
+.env.*
+web_dashboard/.env
+
+# Dependencies
+node_modules/
+web_dashboard/node_modules/
