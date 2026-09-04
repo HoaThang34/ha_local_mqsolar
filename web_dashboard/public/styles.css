@@ -1,15 +1,15 @@
 :root {
-    --bg-color: #f5f7fa;
+    --bg-color: #f0f4f8;
     --card-bg: #ffffff;
-    --text-primary: #333333;
-    --text-secondary: #666666;
-    --border-color: #e5e7eb;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --border-color: #e2e8f0;
     
     /* Brand Colors */
     --color-solar: #f59e0b;
     --color-home: #3b82f6;
-    --color-import: #ef4444;
-    --color-export: #10b981;
+    --color-grid: #ef4444;
+    --color-grid-export: #10b981;
 }
 
 * {
@@ -27,7 +27,7 @@ body {
 }
 
 .dashboard-container {
-    max-width: 1000px;
+    max-width: 900px;
     margin: 0 auto;
 }
 
@@ -35,11 +35,11 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
-    padding: 20px;
+    margin-bottom: 20px;
+    padding: 15px 20px;
     background-color: var(--card-bg);
     border-radius: 12px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
 }
 
 .logo {
@@ -72,84 +72,289 @@ header {
 }
 
 .dot.online {
-    background-color: var(--color-export);
+    background-color: var(--color-grid-export);
 }
 
-.grid-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 20px;
-    margin-bottom: 30px;
-}
-
-.card {
+/* Sơ đồ hệ thống (System Diagram) */
+.device-section {
     background-color: var(--card-bg);
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    border-top: 4px solid var(--border-color);
+    border-radius: 16px;
+    padding: 30px 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
 }
 
-.card.solar { border-top-color: var(--color-solar); }
-.card.home { border-top-color: var(--color-home); }
-.card.grid-import { border-top-color: var(--color-import); }
-.card.grid-export { border-top-color: var(--color-export); }
-
-.card-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
+.device-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
 }
 
-.icon-wrapper {
+.device-header h3 {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.device-header strong {
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+/* Absolute Positioning Layout cho Sơ đồ */
+.diagram-container {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    aspect-ratio: 4 / 3; /* Fixed aspect ratio so SVG scales uniformly */
+    margin: 0 auto;
+}
+
+/* SVG Lines background */
+.diagram-lines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+}
+
+@keyframes dash-forward {
+    to { stroke-dashoffset: -24; }
+}
+
+@keyframes dash-backward {
+    to { stroke-dashoffset: 24; }
+}
+
+.animate-flow {
+    stroke-dasharray: 8 8;
+    animation: dash-forward 0.8s linear infinite;
+}
+
+.animate-flow.reverse {
+    animation: dash-backward 0.8s linear infinite;
+}
+
+.stopped {
+    stroke-dasharray: none;
+    animation: none;
+    opacity: 0.4;
+}
+
+/* Nodes */
+.node {
+    position: absolute;
+    transform: translate(-50%, -50%);
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-    background-color: #f3f4f6;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background-color: white;
+    border: 4px solid var(--border-color);
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+    z-index: 3;
 }
 
-.card.solar .icon-wrapper { color: var(--color-solar); background-color: #fef3c7; }
-.card.home .icon-wrapper { color: var(--color-home); background-color: #dbeafe; }
-.card.grid-import .icon-wrapper { color: var(--color-import); background-color: #fee2e2; }
-.card.grid-export .icon-wrapper { color: var(--color-export); background-color: #d1fae5; }
+.node.solar {
+    top: 25%;
+    left: 25%;
+    border-color: var(--color-solar);
+    color: var(--color-solar);
+}
 
-.card h2 {
-    font-size: 1.1rem;
-    font-weight: 500;
+.node.grid {
+    top: 25%;
+    left: 75%;
+}
+
+.node.grid.importing { border-color: var(--color-grid); color: var(--color-grid); }
+.node.grid.exporting { border-color: var(--color-grid-export); color: var(--color-grid-export); }
+.node.grid.idle { border-color: #9ca3af; color: #9ca3af; }
+
+.node.home {
+    top: 75%;
+    left: 50%;
+    border-color: var(--color-home);
+    color: var(--color-home);
+    width: 140px;
+    height: 140px;
+}
+
+.node svg {
+    margin-bottom: 8px;
+}
+
+.node .label {
+    font-size: 0.9rem;
+    font-weight: 600;
     color: var(--text-secondary);
+    text-align: center;
 }
 
-.card-body {
+.node .val-container {
     display: flex;
     align-items: baseline;
-    gap: 8px;
+    gap: 2px;
 }
 
-.value {
-    font-size: 2.5rem;
+.node .value {
+    font-size: 1.2rem;
     font-weight: 700;
     color: var(--text-primary);
 }
 
-.unit {
-    font-size: 1.2rem;
-    font-weight: 500;
+.node.home .value {
+    font-size: 1.4rem;
+}
+
+.node .unit {
+    font-size: 0.8rem;
+    font-weight: 600;
     color: var(--text-secondary);
+}
+
+/* Flows (Labels and values floating on lines) */
+.flow {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    z-index: 2;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 8px 12px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px 10px rgba(255,255,255,0.9);
+}
+
+.flow.solar-flow {
+    top: 50%;
+    left: 37.5%;
+}
+
+.flow.grid-flow {
+    top: 50%;
+    left: 62.5%;
+}
+
+.flow .flow-value {
+    background-color: white;
+    border: 1px solid var(--border-color);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-size: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    white-space: nowrap;
+    margin-top: 4px;
+}
+
+.flow .flow-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 600;
 }
 
 footer {
     text-align: center;
     color: var(--text-secondary);
     font-size: 0.9rem;
-    margin-top: 40px;
+    margin-top: 20px;
+    padding-bottom: 20px;
 }
 
+/* =========================================
+   Mobile Optimization 
+   ========================================= */
 @media (max-width: 600px) {
-    .grid-container {
-        grid-template-columns: 1fr;
+    body {
+        padding: 10px;
     }
+    
+    header {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .device-section {
+        padding: 20px 10px;
+    }
+    
+    .diagram-container {
+        /* On small screens, keep the same aspect ratio so SVG doesn't stretch */
+        /* Nodes will be made smaller below so they fit inside */
+    }
+
+    .node {
+        width: 86px;
+        height: 86px;
+        border-width: 3px;
+    }
+
+    .node.home {
+        width: 100px;
+        height: 100px;
+    }
+
+    .node svg {
+        width: 20px;
+        height: 20px;
+        margin-bottom: 2px;
+    }
+    
+    .node.home svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    .node .label { font-size: 0.65rem; }
+    .node .value { font-size: 0.95rem; }
+    .node.home .value { font-size: 1.1rem; }
+    .node .unit { font-size: 0.65rem; }
+
+    .flow {
+        padding: 6px 8px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px 8px rgba(255,255,255,0.9);
+    }
+
+    .flow .flow-label { font-size: 0.65rem; }
+    .flow .flow-value { 
+        font-size: 0.8rem; 
+        padding: 2px 8px;
+    }
+}
+
+@media (max-width: 400px) {
+    .node {
+        width: 74px;
+        height: 74px;
+        border-width: 2px;
+    }
+
+    .node.home {
+        width: 86px;
+        height: 86px;
+    }
+
+    .node .value { font-size: 0.85rem; }
+    .node.home .value { font-size: 0.95rem; }
+    
+    .flow {
+        padding: 4px 6px;
+        box-shadow: 0 0 8px 6px rgba(255,255,255,0.9);
+    }
+    
+    .flow .flow-label { font-size: 0.6rem; }
+    .flow .flow-value { font-size: 0.75rem; padding: 2px 6px; }
 }
